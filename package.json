@@ -1,0 +1,14 @@
+{
+  "name": "tp-devsecops",
+  "version": "1.0.0",
+  "description": "TP DevSecOps - pipeline CI/CD de sécurité (SAST, SCA, Secret Scanning, DAST)",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
