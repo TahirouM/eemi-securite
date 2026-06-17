@@ -1,7 +1,9 @@
 const express = require('express');
 require('dotenv').config();
 
-const app = express();
+// Faux positif justifié : API en lecture seule (GET), sans cookie de session ni
+// formulaire mutant l'état → la protection CSRF n'est pas applicable ici.
+const app = express(); // nosemgrep: javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
 
 // Route racine simple : permet à wait-on / ZAP de constater que l'app répond.
 app.get('/', (req, res) => {
