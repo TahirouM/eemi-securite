@@ -31,7 +31,11 @@ jobs:
         run: npm audit --audit-level=high
 
       # --- SAST : patterns dangereux dans le code source ---
+      # `if: always()` : on exécute ce scan même si une étape précédente a échoué,
+      # afin de voir TOUTES les détections dans un seul run (pédagogique).
+      # Le job reste en échec global tant qu'un gate est rouge.
       - name: SAST - Semgrep
+        if: always()
         run: |
           pip install semgrep
           semgrep --config auto --error .
@@ -42,6 +46,7 @@ jobs:
       # qui ferait remonter le secret de la branche `vulnerable` jusque dans
       # `secure`/`main`. Ici chaque branche est jugée sur SON propre contenu.
       - name: Secret Scan - Gitleaks
+        if: always()
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz \
             | tar -xz -C /tmp gitleaks
@@ -49,16 +54,20 @@ jobs:
 
       # --- Tests applicatifs ---
       - name: Tests
+        if: always()
         run: npm test
 
       # --- DAST : test de l'application en fonctionnement ---
       - name: Start app
+        if: always()
         run: npm start &
 
       - name: Wait for app
+        if: always()
         run: npx wait-on http://localhost:3000
 
       - name: DAST - OWASP ZAP Baseline
+        if: always()
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:3000'
