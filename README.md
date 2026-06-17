@@ -7,6 +7,7 @@ propre sous-dossier.
 
 | TP | Sujet | Dossier | Énoncé |
 |----|-------|---------|--------|
+| **TP2** | Pentest web/API — audit méthodologique (périmètre, cartographie, auth, autorisation, injections, config) | [`tp2/`](tp2/) | [`tp2/CLAUDE.md`](tp2/CLAUDE.md) |
 | **TP3** | Secure Coding — corriger une app vulnérable (IDOR, injections, XSS, mass assignment, auth, headers, fuite d'info) | [`tp3/`](tp3/) | [`tp3/CLAUDE.md`](tp3/CLAUDE.md) |
 | **TP4** | DevSecOps — pipeline CI/CD de sécurité (SAST, SCA, Secret Scanning, DAST, quality gates) | [`tp4/`](tp4/) | [`tp4/CLAUDE.md`](tp4/CLAUDE.md) |
 
