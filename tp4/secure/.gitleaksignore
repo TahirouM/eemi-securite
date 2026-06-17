@@ -1,7 +1,9 @@
 # Faux positif justifie : la cle d'exemple presente dans CLAUDE.md est un
 # EXEMPLE pedagogique du sujet de TP (et NON un vrai secret). On l'ignore
-# explicitement pour que la branche passe le gate Gitleaks.
+# explicitement pour que la branche `secure` passe le gate Gitleaks.
 # Le vrai secret hardcode reste detecte sur la branche `vulnerable` (src/app.js).
 #
+# Fingerprints Gitleaks (format : <commit>:<fichier>:<regle>:<ligne>) :
+2faeef5e51933343eae04fd8ec5b8f8263780dfe:CLAUDE.md:stripe-access-token:239
 # Fingerprint en mode scan filesystem (--no-git) :
 CLAUDE.md:stripe-access-token:239

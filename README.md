@@ -1,45 +1,19 @@
-# TP DevSecOps — Pipeline CI/CD de sécurité
+# EEMI — Sécurité
 
-Pipeline GitHub Actions exécutant automatiquement des contrôles de sécurité sur
-une application **Node.js / Express**, avec des **quality gates bloquants** sur
-les failles critiques.
+Dépôt regroupant les travaux pratiques de sécurité. Chaque TP est isolé dans son
+propre sous-dossier.
 
-## Outils intégrés
+## Travaux pratiques
 
-| Catégorie | Outil | Rôle |
-|-----------|-------|------|
-| **SCA** | `npm audit` | Vulnérabilités des dépendances |
-| **SAST** | Semgrep | Patterns dangereux dans le code source |
-| **Secret Scanning** | Gitleaks | Secrets exposés dans le dépôt |
-| **DAST** | OWASP ZAP | Tester l'application en fonctionnement |
-| **Quality Gates** | GitHub Actions | Faire échouer le pipeline sur faille critique |
+| TP | Sujet | Dossier | Énoncé |
+|----|-------|---------|--------|
+| **TP3** | Secure Coding — corriger une app vulnérable (IDOR, injections, XSS, mass assignment, auth, headers, fuite d'info) | [`tp3/`](tp3/) | [`tp3/CLAUDE.md`](tp3/CLAUDE.md) |
+| **TP4** | DevSecOps — pipeline CI/CD de sécurité (SAST, SCA, Secret Scanning, DAST, quality gates) | [`tp4/`](tp4/) | [`tp4/CLAUDE.md`](tp4/CLAUDE.md) |
 
-## Branches
+## Organisation
 
-| Branche | Contenu | Pipeline attendu |
-|---------|---------|------------------|
-| `main` | base neutre | passe ✅ |
-| `vulnerable` | failles intentionnelles (eval, command injection, secret hardcodé, dépendance CVE) | **échoue** ❌ |
-| `secure` | corrections (execFile, validation, helmet, secrets en variables d'env) | passe ✅ |
-
-## Démarrage local
-
-```bash
-npm install
-cp .env.example .env   # puis renseigner des valeurs locales
-npm start              # écoute sur http://localhost:3000
-npm test
-```
-
-## Le pipeline
-
-Le workflow se trouve dans [`.github/workflows/security.yml`](.github/workflows/security.yml).
-Il s'exécute sur chaque `push` et `pull_request`.
-
-## Limites
-
-- Le baseline scan ZAP est passif/léger : il ne remplace pas un scan actif ni un pentest manuel.
-- `npm audit` ne couvre que les CVE connues et publiées.
-- Le SAST génère des faux positifs : ils doivent être triés et justifiés.
-- Un secret déjà poussé reste dans l'historique Git : suppression ≠ sécurité, il faut **régénérer**.
-- Les gates bloquent le merge mais ne garantissent pas l'absence totale de vulnérabilité.
+- Tout est sur la branche **`main`** ; chaque TP est un sous-dossier autonome.
+- Les TP qui comparent une version « attaquable » et une version « corrigée »
+  utilisent des sous-dossiers `vulnerable/` et `secure/` (plutôt que des branches),
+  pour que tout soit visible d'un coup.
+- Le pipeline CI (TP4) est dans [`.github/workflows/`](.github/workflows/).

@@ -1,13 +1,26 @@
-name: Security CI
+name: Security CI (TP4)
+
+# Le code du TP4 a été consolidé en sous-dossiers (tp4/secure, tp4/vulnerable).
+# Ce workflow exécute le pipeline de sécurité sur la version `secure` (doit passer).
+# La démo "vulnerable échoue / secure passe" a été réalisée via les branches du
+# même nom (voir tp4/README.md et l'onglet Actions du dépôt).
 
 on:
   push:
+    paths:
+      - 'tp4/secure/**'
+      - '.github/workflows/security.yml'
   pull_request:
+    paths:
+      - 'tp4/secure/**'
   workflow_dispatch:
 
 permissions:
   contents: read
-  security-events: write
+
+defaults:
+  run:
+    working-directory: tp4/secure
 
 jobs:
   security:
@@ -16,7 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0          # historique complet (utile pour Gitleaks)
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -26,25 +39,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # --- SCA : vulnérabilités des dépendances ---
+      # --- SCA ---
       - name: SCA - npm audit
         run: npm audit --audit-level=high
 
-      # --- SAST : patterns dangereux dans le code source ---
-      # `if: always()` : on exécute ce scan même si une étape précédente a échoué,
-      # afin de voir TOUTES les détections dans un seul run (pédagogique).
-      # Le job reste en échec global tant qu'un gate est rouge.
+      # --- SAST ---
       - name: SAST - Semgrep
         if: always()
         run: |
           pip install semgrep
           semgrep --config auto --error .
 
-      # --- Secret Scanning : secrets exposés dans le dépôt ---
-      # On scanne UNIQUEMENT la branche courante (working tree), et non toutes les
-      # branches : l'action officielle gitleaks-action utilise `git log --all`, ce
-      # qui ferait remonter le secret de la branche `vulnerable` jusque dans
-      # `secure`/`main`. Ici chaque branche est jugée sur SON propre contenu.
+      # --- Secret Scanning (branche courante uniquement) ---
       - name: Secret Scan - Gitleaks
         if: always()
         run: |
@@ -52,12 +58,12 @@ jobs:
             | tar -xz -C /tmp gitleaks
           /tmp/gitleaks detect --source . --no-git --redact -v --exit-code 1
 
-      # --- Tests applicatifs ---
+      # --- Tests ---
       - name: Tests
         if: always()
         run: npm test
 
-      # --- DAST : test de l'application en fonctionnement ---
+      # --- DAST ---
       - name: Start app
         if: always()
         run: npm start &
@@ -73,6 +79,4 @@ jobs:
           target: 'http://localhost:3000'
           allow_issue_writing: false
           artifact_name: 'zap-baseline-report'
-          # Seuil du gate DAST : les alertes faible criticité sont déclassées
-          # en IGNORE dans ce fichier ; les alertes Medium/High restent bloquantes.
-          rules_file_name: '.zap/rules.tsv'
+          rules_file_name: 'tp4/secure/.zap/rules.tsv'
