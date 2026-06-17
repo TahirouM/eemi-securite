@@ -59,10 +59,11 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: DAST - OWASP ZAP Baseline
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:3000'
           allow_issue_writing: false
+          artifact_name: 'zap-baseline-report'
           # Seuil du gate DAST : les alertes faible criticité sont déclassées
           # en IGNORE dans ce fichier ; les alertes Medium/High restent bloquantes.
           rules_file_name: '.zap/rules.tsv'
