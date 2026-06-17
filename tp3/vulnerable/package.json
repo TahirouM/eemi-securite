@@ -1,0 +1,21 @@
+{
+  "name": "tp3-vulnerable",
+  "version": "1.0.0",
+  "description": "TP3 Secure Coding - application volontairement vulnérable",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "test": "node --no-warnings --test"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}
