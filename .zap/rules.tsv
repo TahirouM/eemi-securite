@@ -1,0 +1,13 @@
+# Règles ZAP — seuil du quality gate DAST.
+# Format : <ruleId>	<action: IGNORE|WARN|FAIL>	<commentaire optionnel>
+#
+# On déclasse en IGNORE quelques alertes informatives / faible criticité qui ne
+# constituent pas une faille bloquante pour ce TP. Les alertes de criticité
+# supérieure (Medium/High) restent en WARN/FAIL et font échouer le pipeline.
+#
+# Justification : application de démo lecture seule, sans cache sensible ni
+# cookies. Ces en-têtes "nice to have" ne sont pas critiques ici.
+10049	IGNORE	Storable and Cacheable Content (info)
+10055	IGNORE	CSP Wildcard Directive (helmet pose déjà une CSP par défaut)
+10063	IGNORE	Permissions Policy Header Not Set (non critique)
+90004	IGNORE	Cross-Origin-Embedder-Policy Header Missing (non critique)

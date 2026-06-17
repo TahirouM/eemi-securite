@@ -63,3 +63,6 @@ jobs:
         with:
           target: 'http://localhost:3000'
           allow_issue_writing: false
+          # Seuil du gate DAST : les alertes faible criticité sont déclassées
+          # en IGNORE dans ce fichier ; les alertes Medium/High restent bloquantes.
+          rules_file_name: '.zap/rules.tsv'
